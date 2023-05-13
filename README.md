@@ -1,17 +1,16 @@
 # Final-Project-Transforming-and-Analyzing-Data-with-SQL
 
 ## Project/Goals
-(fill in your description and goals here)
+This is just the initial commit for my project.
 
 ## Process
-### (your step 1)
-### (your step 2)
+I edited the readme file
 
 ## Results
-(fill in what you discovered this data could tell you and how you used the data to answer those questions)
+I havent looked at my data yet.
 
 ## Challenges 
-(discuss challenges you faced in the project)
+I spent an hour trying to figure out how to import when i could have just watched the video.
 
 ## Future Goals
-(what would you do if you had more time?)
+I would have imported all the remaining tables.
