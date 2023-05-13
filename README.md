@@ -1,16 +1,16 @@
 # Final-Project-Transforming-and-Analyzing-Data-with-SQL
 
 ## Project/Goals
-This is just the initial commit for my project.
+i laid out the base columns to fill with data
 
 ## Process
-I edited the readme file
+I used commands to create new tables.
 
 ## Results
-I havent looked at my data yet.
+looks ready to fill with cleaned data
 
 ## Challenges 
-I spent an hour trying to figure out how to import when i could have just watched the video.
+Copying the table format to the new tables was hard. i think i have a slow computer.
 
 ## Future Goals
-I would have imported all the remaining tables.
+fill with cleaned data
