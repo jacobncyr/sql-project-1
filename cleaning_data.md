@@ -59,3 +59,32 @@ ORDER BY productSKU DESC;
 --i dropped the modified ratio column and just used this code to get rid of null values
 SET ratio = coalesce(ratio, 0);
 
+--the first thing i notices was there was a pointless column in analytics and i can just drop it
+alter table analytics
+drop column userid;
+
+--i notices null vlaues in analytics.csv right away and considered the columns possibly
+-- redundant but used this function to see that there was data worth saving, note: i iterated throught the columns, after units_sold i checked bounces
+--then revenue
+
+select units_sold, bounces, revenue from analytics
+order by units_sold
+
+--this command updated those columns to not contain null values
+update analytics
+SET units_sold = coalesce(units_sold,0),
+    bounces = coalesce(bounces,0),
+    revenue = coalesce(revenue,0)
+
+--timeonsite in analytics has null values , i must switch these to zero 
+update analytics
+set timeonsite = coalesce(timeonsite, 'none')
+
+--got rid of null values in analytics.pageviews
+update analytics
+set pageviews = coalesce(pageviews,0);
+
+--okay just to recap so you dont lose your place , you created new sales_report and 
+--sales_by_sku tables and cleaned the data for them, the products and analytics tables have been cleaned
+-- within themselves leaving just the all sessions table for cleaning.
+
