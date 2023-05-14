@@ -201,3 +201,100 @@ SET pagetitle = COALESCE(pagetitle, 'no data');
 
 UPDATE all_sessions
 SET ecommerceaction_option = COALESCE(ecommerceaction_option, 'no data');
+
+--starting again today i built some utility code to uncomment as i need to check columns
+--utility code to help find non-alphanumeric values
+--SELECT fullvisitorid
+--FROM all_sessions
+--WHERE fullvisitorid ~ '[^a-zA-Z0-9]'
+
+--utility code to find letters in numeric columns
+--SELECT fullvisitorid
+--FROM all_sessions
+--WHERE fullvisitorid ~ '[[:alpha:]]';
+
+--utility code to find numbers in text columns
+--SELECT *
+--FROM your_table
+--WHERE your_column ~ '[[:digit:]]';
+
+--utility to find the longer strings with "not" in my data and replace with no data
+--select country
+--from all_sessions
+--where country LIKE '%not%'
+
+--not's were found in country = (not set) and city =not available in demo dataset, (not set)
+--this code is used to fix them 
+UPDATE all_sessions
+SET country = REPLACE(country, 'not', 'no data')
+WHERE column_name LIKE '%not%'
+
+UPDATE all_sessions
+SET city = REPLACE(city, 'not', 'no data')
+WHERE city LIKE '%not%'
+
+--also had to fix the productvariant column
+UPDATE all_sessions
+SET productvariant = REPLACE(productvariant, 'not', 'no data')
+WHERE productvariant LIKE '%not%'
+
+--i can uncomment and iterate down the list of tables quickly with this code
+select distinct v2productcategory
+--pagetitle, 
+--pagepathlevel1,
+--currencycode 
+from all_sessions
+
+--it revealed that the v2productcategory contains 2 unnaceptable values  "${escCatTitle}" and "(not set)"
+--this code gets rid of them
+UPDATE all_sessions
+SET productvariant = REPLACE(REPLACE(productvariant, '${escCatTitle}', ''), '(not set)', 'no data')
+WHERE productvariant LIKE '%${escCatTitle}%' OR productvariant LIKE '%(not set)%';
+
+--that didnt work correctly so i replaced with null values and converted the null values 
+UPDATE all_sessions
+SET v2productcategory = NULL
+WHERE v2productcategory LIKE '${escCatTitle}' OR v2productcategory LIKE '(not set)';
+
+UPDATE all_sessions
+SET v2productcategory = 'no data'
+WHERE v2productcategory is null;
+
+-- my graphs have no primary keys. while assigning them i am locating duplicate values in my sales_report productSKU
+--this code removes the duplicates by assigning ctid's to them and deleting all but the minimum one
+-- then the final output shows that there is no duplicates
+
+UPDATE sales_report
+SET "productSKU" = "productSKU" || '_'
+WHERE ctid IN (
+    SELECT ctid
+    FROM (
+        SELECT ctid,
+               ROW_NUMBER() OVER (PARTITION BY "productSKU" ORDER BY ctid) AS row_num
+        FROM sales_report
+    ) sub
+    WHERE row_num > 1
+);
+
+
+SELECT "productSKU", COUNT(*) as duplicate_count
+FROM sales_report
+GROUP BY "productSKU"
+HAVING COUNT(*) > 1;
+
+--starting with the small and simple table, working my way up with complexity i am setting the primary keys
+--handling problems associated with primary keys
+
+ALTER TABLE sales_by_sku
+ADD PRIMARY KEY (productSKU);
+
+ALTER TABLE sales_report
+ADD PRIMARY KEY (productSKU);
+
+
+-- i am running into a performance issue when working with the analytics column so i made a new table with just
+-- the problem column to work on just that
+
+CREATE TABLE tempanalytics AS
+SELECT *
+FROM analytics;
