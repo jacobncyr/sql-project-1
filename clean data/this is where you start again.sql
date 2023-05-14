@@ -1,0 +1,2 @@
+--link tables producs and all_sessions together
+--select * from all_sessions as alls full outer join products p on alls.fullvisitorid = p.sku

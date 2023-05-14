@@ -298,3 +298,27 @@ ADD PRIMARY KEY (productSKU);
 CREATE TABLE tempanalytics AS
 SELECT *
 FROM analytics;
+
+--while trying to set primary keys on the all_sessions and analytics tables i get duplicates errors this code
+--removes duplicates
+
+DELETE FROM analytics
+WHERE ctid NOT IN (
+    SELECT MIN(ctid)
+    FROM analytics
+    GROUP BY "fullvisitorid"
+);
+
+DELETE FROM all_sessions
+WHERE ctid NOT IN (
+    SELECT MIN(ctid)
+    FROM analytics
+    GROUP BY "fullvisitorid"
+);
+
+
+-- i can now set primary key
+ALTER TABLE analytics
+ADD PRIMARY KEY ("fullvisitorid");
+ALTER TABLE all
+ADD PRIMARY KEY ("fullvisitorid");
