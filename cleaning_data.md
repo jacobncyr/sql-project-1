@@ -88,3 +88,116 @@ set pageviews = coalesce(pageviews,0);
 --sales_by_sku tables and cleaned the data for them, the products and analytics tables have been cleaned
 -- within themselves leaving just the all sessions table for cleaning.
 
+--the unit price in analytics needs to be divided by 1000000 like the description says.
+update analytics
+set unit_price = unit_price / 1000000
+
+--checking totaltransactionrevenue in all_sessions for unique values other than null
+SELECT totaltransactionrevenue
+FROM all_sessions
+WHERE totaltransactionrevenue IS not NULL;
+
+--checking for null columns i found the productrefund ammount only had null values.
+
+SELECT productrefundamount
+FROM all_sessions
+WHERE productrefundamount IS not NULL;
+
+-- Removing the null column 
+alter table all_sessions
+drop column productrefundamount;
+
+--this queary reveals that itemquantity is a null column, it only hass null values
+SELECT itemquantity
+FROM all_sessions
+WHERE itemquantity IS no NULL;
+
+--checking itemquanity and itemrevenue both reveal null columns. removing with 
+alter table all_sessions
+drop column itemquantity;
+
+alter table all_sessions
+drop column itemrevenue;
+
+--while checking totaltransactions non null values i see that i need to convert to bigint
+-- Add a new bigint column
+ALTER TABLE all_sessions
+ADD COLUMN new_totaltransactionrevenue bigint;
+
+--Update the new column with converted values
+UPDATE all_sessions
+SET new_totaltransactionrevenue = CAST(totaltransactionrevenue AS bigint);
+
+--Drop the old text column
+ALTER TABLE all_sessions
+DROP COLUMN totaltransactionrevenue;
+
+--Rename the new column to the original column name
+ALTER TABLE all_sessions
+RENAME COLUMN new_totaltransactionrevenue TO totaltransactionrevenue;
+
+-- null values removed from totaltransactionrevenue 
+UPDATE all_sessions
+SET totaltransactionrevenue = COALESCE(totaltransactionrevenue, 0);
+
+--notice removing the null values from transactions would be a similar operation
+
+UPDATE all_sessions
+SET transactions = COALESCE(transactions, 0);
+
+--timeonsite seems to be an integer value. you cant have negative time values so if its null its zero.
+
+UPDATE all_sessions
+SET timeonsite = COALESCE(timeonsite, 0);
+
+--sessionqualitydim seems to be a scale of some sort so it needs to have its null values zeroed.
+
+UPDATE all_sessions
+SET sessionqualitydim = COALESCE(sessionqualitydim, 0);
+
+--this command shows me transactionrevenue has information, its not alot of information but ill keep it.
+-- ill also convert the null to zero.
+select transactionrevenue from all_sessions where transactionrevenue is not null
+
+UPDATE all_sessions
+SET transactionrevenue = COALESCE(transactionrevenue, 0);
+
+
+--using code like this i can quickly check all columns for non null values.
+--if i find only null values the column can be discarded
+
+select productrevenue
+from all_sessions
+where  productrevenue is not null;
+
+--searchkeyword is the last null column i removed it with 
+ALTER TABLE all_sessions
+DROP COLUMN searchkeyword;
+
+--this handy 2 lines converts my charactervarying to zero if there is a null value,
+--a further modification and i can quickly remove null values in numeric columns
+
+ALTER TABLE all_sessions
+ALTER COLUMN productquantity TYPE integer USING (COALESCE(NULLIF(productquantity, ''), '0')::integer);
+
+--productrevenue was screwed up dont forget to get it from a new import and fix it ****************************************************************
+
+--currencycode can have its null values replaced with a'no data' string
+
+UPDATE all_sessions
+SET currencycode = COALESCE(currencycode, 'no data');
+
+--transactionid is alphanumeric so i will replace the nulls with 'no data'
+
+UPDATE all_sessions
+SET transactionid= COALESCE(transactionid, 'no data');
+
+--pagetitle is text so i will coalesce with 'no data' for null values
+
+UPDATE all_sessions
+SET pagetitle = COALESCE(pagetitle, 'no data');
+
+--ecommerceaction_option  is text so i will coalesce with 'no data' for null values
+
+UPDATE all_sessions
+SET ecommerceaction_option = COALESCE(ecommerceaction_option, 'no data');
