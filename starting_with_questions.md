@@ -51,80 +51,124 @@ Answer:
 
 SQL Queries:
 
-SELECT alls.city, alls.country,
-count(alls.v2productcategory) as categorycount
-FROM all_sessions AS alls
-FULL OUTER JOIN products p ON alls.fullvisitorid = p.sku
-full outer join sales_report sr on p.sku = sr."productSKU"
-group by alls.city, alls.country
-order by categorycount desc
-
+WITH country_average AS (
+    SELECT
+        country AS Name,
+        'country' AS Type,
+        AVG(p.orderedQuantity) AS average_products_ordered
+    FROM
+        all_sessions AS als
+    JOIN products AS p ON als.productSKU = p.SKU
+    GROUP BY country
+),
+city_average AS (
+    SELECT
+        city AS Name,
+        'city' AS Type,
+        AVG(p.orderedQuantity) AS average_products_ordered
+    FROM
+        all_sessions AS als
+    JOIN products AS p ON als.productSKU = p.SKU
+    WHERE
+        city IS NOT NULL AND city <> '(not set)'
+    GROUP BY city
+)
+SELECT
+    Name,
+    Type,
+    ROUND(average_products_ordered, 0) AS average_products_ordered
+FROM
+    (
+        SELECT * FROM country_average
+        UNION
+        SELECT * FROM city_average
+    ) AS combined
+ORDER BY average_products_ordered DESC;
 
 Answer:
 
 --using this query i can see that of the top 10 productcategories ordered,
 -- united states is in 6 of them, canada also makes the list once
 
-
-
 **Question 4: What is the top-selling product from each city/country? Can we find any pattern worthy of noting in the products sold?**
 
 
 SQL Queries:
 
---query for city
-SELECT city, v2productname, categorycount
-FROM (
-  SELECT
-    alls.city,
-    alls.v2productname,
-    COUNT(alls.v2productname) AS categorycount,
-    ROW_NUMBER() OVER (PARTITION BY alls.city ORDER BY COUNT(alls.v2productname) DESC) AS row_num
-  FROM
-    all_sessions AS alls
-  FULL OUTER JOIN products p ON alls.fullvisitorid = p.sku
-  FULL OUTER JOIN sales_report sr ON p.sku = sr."productSKU"
-  WHERE city NOT LIKE 'no data%'
-  GROUP BY alls.city, alls.v2productname
-) AS subquery
-WHERE row_num = 1
-ORDER BY city;
-
---query for country
-SELECT country, v2productname, categorycount
-FROM (
-  SELECT
-    alls.country,
-    alls.v2productname,
-    COUNT(alls.v2productname) AS categorycount,
-    ROW_NUMBER() OVER (PARTITION BY alls.country ORDER BY COUNT(alls.v2productname) DESC) AS row_num
-  FROM
-    all_sessions AS alls
-  FULL OUTER JOIN products p ON alls.fullvisitorid = p.sku
-  FULL OUTER JOIN sales_report sr ON p.sku = sr."productSKU"
-  WHERE city NOT LIKE 'no data%'
-  GROUP BY alls.city, alls.v2productname
-) AS subquery
-WHERE row_num = 1
-ORDER BY city;
+WITH country_average AS (
+    SELECT
+        country AS Name,
+        'country' AS Type,
+        v2ProductCategory,
+        AVG(p.orderedQuantity) AS average_products_ordered
+    FROM
+        all_sessions AS als
+    JOIN products AS p ON als.productSKU = p.SKU
+    GROUP BY country, v2ProductCategory
+),
+city_average AS (
+    SELECT
+        city AS Name,
+        'city' AS Type,
+        v2ProductCategory,
+        AVG(p.orderedQuantity) AS average_products_ordered
+    FROM
+        all_sessions AS als
+    JOIN products AS p ON als.productSKU = p.SKU
+    WHERE
+        city IS NOT NULL AND city <> '(not set)'
+    GROUP BY city, v2ProductCategory
+)
+SELECT
+    Name,
+    Type,
+    v2ProductCategory,
+    ROUND(average_products_ordered, 0) AS average_products_ordered
+FROM
+    (
+        SELECT * FROM country_average
+        UNION
+        SELECT * FROM city_average
+    ) AS combined
+ORDER BY average_products_ordered DESC;
 
 Answer:
 
---using a window function  subquery you can see the top selling item in each city and to see the top selling item and quantity of each country just/
---switch the city column name to country
-
+--using a cte we can union tables on countries and cities and they average products ordered, this data includes the oproduct category
+--i can see that alot of entries have the same average products ordered which is suspicious and seems unnatural.
 
 **Question 5: Can we summarize the impact of revenue generated from each city/country?**
 
 SQL Queries:
 
-
+WITH analytics AS (
+    SELECT * FROM analytics
+),
+allsessions AS (
+    SELECT * FROM all_sessions
+)
+SELECT *
+FROM (
+    SELECT city, visitnumber, analytics.units_sold * analytics.unit_price as revenuemade
+    FROM allsessions
+    JOIN analytics USING(fullvisitorid)
+) AS combined_data
+order by revenuemade desc;
 
 Answer:
 
+-with this query i can see the ammount of visits with the current table of revenue made. 
+-if i had a series of these tables that collected this data according to time i would be able to 
+-see if the revenue made was increasing the visits, if i had multiple sources of this data i could locate falling revenues.
 
-
-
+-city                           visitnumber    revenuemade
+-"Palo Alto"				2	249
+-"Irvine"				2	55
+-"Singapore"				1	7
+-"no data available in demo dataset"	2	1
+-"Kiev"					31	0
+-"Sunnyvale"				1	0
+-"no data available in demo dataset"	1	0
 
 
 
