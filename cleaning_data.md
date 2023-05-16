@@ -67,12 +67,11 @@ alter table analytics
 drop column userid;
 
 __--i notices null vlaues in analytics.csv right away and considered the columns possibly
--- redundant but used this function to see that there was data worth saving, note: i iterated throught the columns, after units_sold i checked bounces
---then revenue__
-``
+-- redundant but used this function to see that there was data worth saving__
+```
 select units_sold, bounces, revenue from analytics
 order by units_sold;
-``
+```
 __--this command updated those columns to not contain null values__
 ```
 update analytics
