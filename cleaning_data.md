@@ -9,7 +9,7 @@ Below, provide the SQL queries you used to clean your data.
 -- the first thing i did was create a new template from the original tables,
 -- a place to store the new clean data
 
--CREATE TABLE analytics_new AS
+```CREATE TABLE analytics_new AS
 SELECT * FROM analytics LIMIT 0;
 
 CREATE TABLE products_new AS
@@ -26,7 +26,7 @@ SELECT * FROM sales_report LIMIT 0;
 
 CREATE TABLE allsessions_new AS
 SELECT * FROM all_sessions LIMIT 0;
-
+```
 -- i need a primary key and fullvisitorid looks candidate.
 -- using this to check for duplicates
 -- this is the query i use to find duplicates,
