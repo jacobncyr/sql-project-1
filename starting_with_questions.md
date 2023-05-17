@@ -1,18 +1,18 @@
 Answer the following questions and provide the SQL queries used to find the answer.
 
     
-**Question 1: Which cities and countries have the highest level of transaction revenues on the site?**
+__Question 1: Which cities and countries have the highest level of transaction revenues on the site?__
 
 
-SQL Queries:
-
+__SQL Queries:__
+```
 select totaltransactionrevenue,city
 from all_sessions
 where city not like 'no data%'
 order by totaltransactionrevenue desc
+```
 
-
-Answer:
+__Answer:__
 
 --i can select the highest transaction revenues and their corresponding cities 
 --from all_sessions and order it descending and the first values with cities are atlantla,
@@ -20,10 +20,10 @@ Answer:
 --entries with no city
 
 
-**Question 2: What is the average number of products ordered from visitors in each city and country?**
+__Question 2: What is the average number of products ordered from visitors in each city and country?__
 
-SQL Queries:
-
+__SQL Queries:__
+```
 SELECT
   alls.city,
   alls.country,
@@ -32,9 +32,9 @@ FROM all_sessions AS alls
 FULL OUTER JOIN products p ON alls.fullvisitorid = p.sku
 GROUP BY alls.city, alls.country
 order by avgvalue desc;
+```
 
-
-Answer:
+__Answer:__
 
 --i found a few entries of the average value using this query
 "no data available in demo dataset"	"Colombia"	530937.500000000000
@@ -46,11 +46,11 @@ Answer:
 "Dallas"				"United States"	233000.000000000000
 "no data available in demo dataset"	"Finland"	142142.857142857143
 
-**Question 3: Is there any pattern in the types (product categories) of products ordered from visitors in each city and country?**
+__Question 3: Is there any pattern in the types (product categories) of products ordered from visitors in each city and country?__
 
 
-SQL Queries:
-
+__SQL Queries:__
+```
 WITH country_average AS (
     SELECT
         country AS Name,
@@ -84,17 +84,17 @@ FROM
         SELECT * FROM city_average
     ) AS combined
 ORDER BY average_products_ordered DESC;
-
-Answer:
+```
+__Answer:__
 
 --using this query i can see that of the top 10 productcategories ordered,
 -- united states is in 6 of them, canada also makes the list once
 
-**Question 4: What is the top-selling product from each city/country? Can we find any pattern worthy of noting in the products sold?**
+__Question 4: What is the top-selling product from each city/country? Can we find any pattern worthy of noting in the products sold?__
 
 
-SQL Queries:
-
+__SQL Queries:__
+```
 WITH country_average AS (
     SELECT
         country AS Name,
@@ -131,16 +131,16 @@ FROM
         SELECT * FROM city_average
     ) AS combined
 ORDER BY average_products_ordered DESC;
-
-Answer:
+```
+__Answer:__
 
 --using a cte we can union tables on countries and cities and they average products ordered, this data includes the oproduct category
 --i can see that alot of entries have the same average products ordered which is suspicious and seems unnatural.
 
-**Question 5: Can we summarize the impact of revenue generated from each city/country?**
+__Question 5: Can we summarize the impact of revenue generated from each city/country?__
 
-SQL Queries:
-
+__SQL Queries:__
+```
 WITH analytics AS (
     SELECT * FROM analytics
 ),
@@ -154,8 +154,8 @@ FROM (
     JOIN analytics USING(fullvisitorid)
 ) AS combined_data
 order by revenuemade desc;
-
-Answer:
+```
+__Answer:__
 
 -with this query i can see the ammount of visits with the current table of revenue made. 
 -if i had a series of these tables that collected this data according to time i would be able to 
