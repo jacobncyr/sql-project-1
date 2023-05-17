@@ -67,16 +67,41 @@ fullvisitorid		date		total_revenue
 
 Question 4: 
 
+determine the number of unique visitors
+
 SQL Queries:
+SELECT COUNT(DISTINCT fullvisitorid) AS unique_visitors
+FROM all_sessions AS als
+INNER JOIN analytics AS al USING(fullvisitorid);
 
 
 
 Answer:
-
+--using an aggregation function i can find this
+3896
 
 
 Question 5: 
 
+retrieve the total number of sessions for each country, order by total_sessions and limit top 5
+
 SQL Queries:
 
+SELECT country, SUM(session_count) AS total_sessions
+FROM (
+  SELECT als.fullvisitorid, als.country, COUNT(*) AS session_count
+  FROM all_sessions AS als
+  INNER JOIN analytics AS al USING(fullvisitorid)
+  GROUP BY als.fullvisitorid, als.country
+) as subq
+GROUP BY country
+order by total_sessions desc limit 5;
+
+
 Answer:
+country			total_sessions
+"United States"		2174
+"India"			207
+"United Kingdom"	202
+"Canada"		144
+"Germany"		81

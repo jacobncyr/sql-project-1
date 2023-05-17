@@ -1,16 +1,23 @@
 # Final-Project-Transforming-and-Analyzing-Data-with-SQL
 
 ## Project/Goals
-i laid out the base columns to fill with data
+I used this ecommerce data to do some descriptive statistics.
+building this database was for the purpose of learning postgresql
 
 ## Process
-I used commands to create new tables.
+Starting with a QA process i determined the quality of my data and where to start on cleaning.
+I cleaned using sql commands as documented in the cleaning_data.md file. I believe i did a good job of
+cleaning the data. I did not do calulations on the data to verify its correctness so some
+issues may arise.
 
 ## Results
-looks ready to fill with cleaned data
+The result is cleaned tables all ready to join by primary keys. Some foreign keys exist
+but are not noted in the ERD, they can be located though by inspection. one is product.sku is equal to the column 
+analytics.fullvisitorid to complete the tables.
 
 ## Challenges 
-Copying the table format to the new tables was hard. i think i have a slow computer.
+The only problem i ran into was i accidentally lost some data. i didnt seem to have any issues while
+doing my calculations so im hoping thats okay.
 
 ## Future Goals
-fill with cleaned data
+Complete all cleaning and work on markdown structure.

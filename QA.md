@@ -4,6 +4,7 @@ What are your risk areas? Identify and describe them.
 
 QA Process:
 Describe your QA process and include the SQL queries used to execute it.
+
 When i was doing the QA process i had to check for duplicate records, missing values
 badly formatted values and incorrect data formats. I should have done a few calculations to verify the 
 integrity of the data, that is something i did not do. Data accuracy could be a potential problem.
