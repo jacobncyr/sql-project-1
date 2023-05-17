@@ -35,7 +35,7 @@ order by avgvalue desc;
 ```
 
 __Answer:__
-
+```
 --i found a few entries of the average value using this query
 "no data available in demo dataset"	"Colombia"	530937.500000000000
 "no data available in demo dataset"	"United States"	515842.091771340682
@@ -45,7 +45,7 @@ __Answer:__
 "Bengaluru"				"India"	235972.222222222222
 "Dallas"				"United States"	233000.000000000000
 "no data available in demo dataset"	"Finland"	142142.857142857143
-
+```
 __Question 3: Is there any pattern in the types (product categories) of products ordered from visitors in each city and country?__
 
 
@@ -160,7 +160,7 @@ __Answer:__
 -with this query i can see the ammount of visits with the current table of revenue made. 
 -if i had a series of these tables that collected this data according to time i would be able to 
 -see if the revenue made was increasing the visits, if i had multiple sources of this data i could locate falling revenues.
-
+```
 -city                           visitnumber    revenuemade
 -"Palo Alto"				2	249
 -"Irvine"				2	55
@@ -169,6 +169,6 @@ __Answer:__
 -"Kiev"					31	0
 -"Sunnyvale"				1	0
 -"no data available in demo dataset"	1	0
-
+```
 
 
